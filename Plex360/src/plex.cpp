@@ -9,6 +9,7 @@ namespace Plex {
 
 static char s_srvHost[64] = "";
 static WORD s_srvPort = 32400;
+static bool s_useTls = false;
 static char s_token[128] = "";
 static char s_headers[256] = "";
 
@@ -22,6 +23,9 @@ void SetServer(const char* host, WORD port, const char* token)
     else
         s_headers[0] = 0;
 }
+
+void SetUseTls(bool on) { s_useTls = on; }
+bool UseTls() { return s_useTls; }
 
 const char* Host() { return s_srvHost; }
 WORD Port() { return s_srvPort; }

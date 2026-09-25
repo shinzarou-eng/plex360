@@ -31,6 +31,8 @@ struct PlexItem {
 namespace Plex {
 
 void SetServer(const char* host, WORD port, const char* token);
+void SetUseTls(bool on);   // https=1 dans config.ini -> Net::HttpsGet
+bool UseTls();
 const char* Host();
 WORD Port();
 

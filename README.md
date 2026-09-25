@@ -27,6 +27,7 @@ Copy `build\Release\bin\Plex360.xex` **and** `config.ini` to the console
 server=192.168.1.10   ; your Plex server IP
 port=32400
 ;token=               ; optional if LAN is "allowed without auth"
+;https=1              ; optional - TLS 1.2 (remote servers, port 443)
 ```
 
 Token tip: Plex Web → Settings → Network → *"List of IP addresses and
@@ -96,7 +97,8 @@ Plex360/
   config.ini.example       Server config template
   src/
     main.cpp               Screen machine + worker thread + net queue + XMV
-    net.{h,cpp}            HTTP GET over BSD sockets (XNetStartup, DNS, chunked)
+    net.{h,cpp}            HTTP/HTTPS GET (BSD sockets + TLS 1.2 via BearSSL)
+    tls/                   XboxTLS (BearSSL TLS 1.2, MIT - Jakob Rangel)
     plex.{h,cpp}           Plex API paths + XML response parsing
     xmlmini.{h,cpp}        XML element extractor (tags + attributes)
     renderer.{h,cpp}       D3D9 quads/text/images (3 batches, single VB)

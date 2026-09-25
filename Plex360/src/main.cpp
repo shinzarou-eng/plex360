@@ -101,8 +101,11 @@ static DWORD WINAPI WorkerProc(LPVOID)
 
         NetResult r;
         r.id = j.id; r.data = NULL; r.size = 0; r.status = 0;
-        r.ok = Net::HttpGet(Plex::Host(), Plex::Port(), j.path,
-                            Plex::ExtraHeaders(), &r.data, &r.size, &r.status);
+        r.ok = Plex::UseTls()
+            ? Net::HttpsGet(Plex::Host(), Plex::Port(), j.path,
+                            Plex::ExtraHeaders(), &r.data, &r.size, &r.status)
+            : Net::HttpGet(Plex::Host(), Plex::Port(), j.path,
+                           Plex::ExtraHeaders(), &r.data, &r.size, &r.status);
         EnterCriticalSection(&s_qLock);
         s_results.push_back(r);
         LeaveCriticalSection(&s_qLock);
@@ -206,6 +209,7 @@ static bool LoadConfig()
     };
     char host[64] = "", token[128] = "";
     int port = 32400;
+    bool useTls = false;
     bool found = false;
     for (int i = 0; i < 5 && !found; ++i) {
         FILE* f = fopen(paths[i], "rb");
@@ -223,11 +227,13 @@ static bool LoadConfig()
             if      (_stricmp(line, "server") == 0) strcpy_s(host, sizeof(host), val);
             else if (_stricmp(line, "port") == 0)   port = atoi(val);
             else if (_stricmp(line, "token") == 0)  strcpy_s(token, sizeof(token), val);
+            else if (_stricmp(line, "https") == 0)  useTls = (*val == '1' || *val == 'y' || *val == 'Y');
         }
         fclose(f);
     }
     if (!found || !host[0]) return false;
     Plex::SetServer(host, (WORD)port, token);
+    Plex::SetUseTls(useTls);
     return true;
 }
 

@@ -21,6 +21,12 @@ bool HttpGet(const char* host, WORD port, const char* path,
 int LastStage();   // etape ou le dernier HttpGet a echoue (0 = OK)
 int LastErr();     // WSAGetLastError au moment de l'echec
 
+// HTTPS (TLS 1.2, BearSSL) — memes conventions que HttpGet.
+// Anchors embarques : ISRG Root X1 (Let's Encrypt) + GTS Root R4 (Google).
+bool HttpsGet(const char* host, WORD port, const char* path,
+              const char* extraHeaders,
+              BYTE** outData, DWORD* outSize, DWORD* outStatus);
+
 // Timeout send/recv des appels suivants (defaut 10s). Le relay transcodeur
 // peut mettre du temps a produire les donnees -> appeler avec ~60s avant
 // une lecture stream, puis remettre 10s.

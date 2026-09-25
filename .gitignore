@@ -1,0 +1,21 @@
+sdk/
+build/
+AGENTS.md
+MEMORY.md
+nul
+
+# config reelle (token Plex) — commiter seulement config.ini.example
+Plex360/config.ini
+build/Release/bin/config.ini
+
+# artefacts de test locaux
+pctest/*.wmv
+pctest/*.mkv
+pctest/*.mp4
+pctest/*.obj
+pctest/*.exe
+pctest/*.log
+pctest/test.cpp
+pctest/xtl.h
+pctest/PlexRelay/bin/
+pctest/PlexRelay/obj/

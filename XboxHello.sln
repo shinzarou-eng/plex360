@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XboxHello", "XboxHello\XboxHello.vcxproj", "{7C1E5F2A-3B4D-4E5F-9A6B-1C2D3E4F5A6B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plex360", "Plex360\Plex360.vcxproj", "{9A8B7C6D-5E4F-4A3B-8C7D-2E1F0A9B8C7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Xbox 360 = Debug|Xbox 360
+		Release|Xbox 360 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C1E5F2A-3B4D-4E5F-9A6B-1C2D3E4F5A6B}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{7C1E5F2A-3B4D-4E5F-9A6B-1C2D3E4F5A6B}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{7C1E5F2A-3B4D-4E5F-9A6B-1C2D3E4F5A6B}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{7C1E5F2A-3B4D-4E5F-9A6B-1C2D3E4F5A6B}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{9A8B7C6D-5E4F-4A3B-8C7D-2E1F0A9B8C7D}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{9A8B7C6D-5E4F-4A3B-8C7D-2E1F0A9B8C7D}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{9A8B7C6D-5E4F-4A3B-8C7D-2E1F0A9B8C7D}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{9A8B7C6D-5E4F-4A3B-8C7D-2E1F0A9B8C7D}.Release|Xbox 360.Build.0 = Release|Xbox 360
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

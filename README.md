@@ -1,16 +1,17 @@
-# Homebrew Xbox 360 — XboxHello + Plex360
+# Xbox 360 Homebrew — XboxHello + Plex360
 
-Deux apps `.xex` pour console **RGH/JTAG** (ou devkit), toolchain standalone :
+Two native `.xex` apps for **RGH/JTAG** consoles (or devkit), with a
+standalone command-line toolchain:
 
-- **Plex360** — client Plex natif : bibliothèques, grille de posters, fiches
-  détaillées, visionneuse photo. HTTP sockets + XML + JPEG.
-- **XboxHello** — démo D3D9/XInput (Hello World avancé).
+- **Plex360** — native Plex client: library browsing, poster grid, detail
+  pages, photo viewer, and video playback (local WMV + streamed transcode).
+  BSD sockets + XML + JPEG + XMedia2/XAudio2.
+- **XboxHello** — D3D9/XInput demo (advanced Hello World).
 
-## Build — aucun prérequis à installer
+## Build — nothing to install
 
-Le SDK 21256.3 est déjà extrait dans `sdk\extracted\XDK` et le toolchain
-(compilateur Xenon PPC, linker, imagexex) s'utilise directement en ligne de
-commande. **VS2010 n'est PAS nécessaire.**
+The XDK 21256.3 toolchain (Xenon PPC compiler, linker, imagexex) is used
+directly from the command line. **VS2010 is NOT required.**
 
 ```
 build.bat            → build\Release\bin\Plex360.xex
@@ -19,106 +20,107 @@ build.bat XboxHello  → build\Release\bin\XboxHello.xex
 
 ## Plex360 — configuration
 
-Copie `build\Release\bin\Plex360.xex` **et** `build\Release\bin\config.ini`
-(copié automatiquement par le build) sur la console. Édite `config.ini` :
+Copy `build\Release\bin\Plex360.xex` **and** `config.ini` to the console
+(e.g. `Hdd1:\Homebrew\Plex360\`). Edit `config.ini`:
 
 ```ini
-server=192.168.1.10   ; IP de ton serveur Plex
+server=192.168.1.10   ; your Plex server IP
 port=32400
-;token=               ; optionnel si le LAN est en "allowed without auth"
+;token=               ; optional if LAN is "allowed without auth"
 ```
 
-Astuce token : dans Plex Web → Settings → Network → *"List of IP addresses and
-networks that are allowed without auth"* ajoute `192.168.1.0/24` (adapte ton
-sous-réseau) → pas besoin de token.
+Token tip: Plex Web → Settings → Network → *"List of IP addresses and
+networks that are allowed without auth"* → add `192.168.1.0/24` (adjust to
+your subnet) → no token needed.
 
-## Plex360 — contrôles
+## Plex360 — controls
 
-| Input            | Action                                        |
-|------------------|-----------------------------------------------|
-| D-PAD            | Naviguer sections / grille                    |
-| A                | Ouvrir section/item, photo plein écran        |
-| B                | Retour                                        |
-| LB / RB          | Sauts de 10 items dans la grille              |
-| BACK + START     | Quitter (retour dashboard)                    |
+| Input            | Action                                       |
+|------------------|----------------------------------------------|
+| D-PAD            | Navigate sections / poster grid              |
+| A                | Open section/item, fullscreen photo, play    |
+| B                | Back                                         |
+| LB / RB          | Page jumps in the grid                       |
+| X (libraries)    | Play local `test.wmv`                        |
+| Y (libraries)    | Play `test.wmv` via USER_IO stream           |
+| BACK + START     | Quit (back to dashboard)                     |
 
-Écrans : bibliothèques → grille de posters (chargés en tâche de fond via
-`/photo/:/transcode`) → détail (synopsis, durée, année) → visionneuse photo.
-La lecture vidéo n'est pas encore implémentée (voir roadmap).
+Screens: libraries → poster grid (background-loaded via
+`/photo/:/transcode`) → detail (synopsis, duration, year) → photo viewer.
 
-## XboxHello — contrôles
+## Video playback
+
+`IXMedia2XmvPlayer` (xmedia2) plays WMV/ASF: **WMV3 / VC-1 + WMA** codecs
+(WMV2 is rejected). Sources that aren't already WMV go through
+`pctest\PlexRelay` — a tiny TCP HTTP server on the PC (port 8090, no admin
+rights needed) that transcodes with Windows `MediaTranscoder` and serves
+the growing `.wmv` by byte ranges to the console's USER_IO stream.
+
+```
+PlexRelay.exe      → http://<pc>:8090  (/start /read /status /stop)
+```
+
+## XboxHello — controls
 
 | Input            | Action                          |
 |------------------|---------------------------------|
-| Stick gauche     | Déplacer le curseur             |
-| A                | Rumble + compteur d'appuis      |
-| BACK + START     | Quitter (retour au dashboard)   |
+| Left stick       | Move the cursor                 |
+| A                | Rumble + press counter          |
+| BACK + START     | Quit (back to dashboard)        |
 
-## Contrôles
+## Deploying to the console (RGH/JTAG)
 
-| Input            | Action                          |
-|------------------|---------------------------------|
-| Stick gauche     | Déplacer le curseur             |
-| A                | Rumble + compteur d'appuis      |
-| BACK + START     | Quitter (retour au dashboard)   |
+- **USB**: copy the `.xex` to a FAT32 stick → run it from
+  Aurora / FreestyleDash / XeXMenu (file browser → launch the .xex).
+- **LAN**: FTP into the running dashboard (user `xboxftp`, port 21) —
+  `pctest\deploy.py` does it — or Xbox 360 Neighborhood with a full
+  VS2010+SDK setup.
 
-## Déploiement sur la console (RGH/JTAG)
+## Testing without a console
 
-- **USB** : copier `XboxHello.xex` sur une clé FAT32 → le lancer depuis
-  Aurora / FreestyleDash / XeXMenu (navigateur de fichiers → exécuter le .xex).
-- **LAN** : via un serveur FTP/FSD/Aurora actif sur la console, ou Xbox 360
-  Neighborhood si tu installes un jour le setup complet (VS2010 + SDK).
+**Xenia Canary** runs homebrew `.xex` files: drag `Plex360.xex` onto
+`xenia_canary.exe` (networking is hit-or-miss).
 
-## Tester sans console
-
-**Xenia Canary** exécute les `.xex` homebrew : glisser-déposer
-`XboxHello.xex` sur `xenia_canary.exe`.
-
-## Structure
+## Layout
 
 ```
-XboxHello.sln              Solution VS2010 (optionnel, si VS2010+XDK installes)
-build.bat                  Build standalone generique : build.bat [Projet]
-sdk/
-  XBOX360_SDK_21256.3.exe  Installeur source (archive.org, sha256 verifie)
-  extracted/XDK/           SDK extrait : bin\win32 (outils), include\xbox,
-                           lib\xbox, TechPreview\Jul12Compiler (headers CRT)
+XboxHello.sln              VS2010 solution (optional, if VS2010+XDK installed)
+build.bat                  Generic standalone build: build.bat [Project]
 XboxHello/
-  XboxHello.vcxproj        Projet plateforme "Xbox 360" (toolset 2010-01)
+  XboxHello.vcxproj        "Xbox 360" platform project (toolset 2010-01)
   src/
-    main.cpp               App : D3D9 + shaders + XInput + HUD (~450 lignes)
-    font8x8.h              Font bitmap 8x8 embarquee (public domain)
+    main.cpp               App: D3D9 + shaders + XInput + HUD (~450 lines)
+    font8x8.h              Embedded 8x8 bitmap font (public domain)
 Plex360/
-  Plex360.vcxproj          Projet Xbox 360
-  config.ini               Exemple de config serveur
+  Plex360.vcxproj          Xbox 360 project
+  config.ini.example       Server config template
   src/
-    main.cpp               Machine a ecrans + worker thread + queue reseau
-    net.{h,cpp}            HTTP GET sur sockets BSD (XNetStartup, DNS, chunked)
-    plex.{h,cpp}           Chemins API Plex + parsing des reponses XML
-    xmlmini.{h,cpp}        Extracteur d'elements XML (tags + attributs)
-    renderer.{h,cpp}       Quads/texte/images D3D9 (3 batches, VB unique)
-    font8x8.h              Font bitmap
+    main.cpp               Screen machine + worker thread + net queue + XMV
+    net.{h,cpp}            HTTP GET over BSD sockets (XNetStartup, DNS, chunked)
+    plex.{h,cpp}           Plex API paths + XML response parsing
+    xmlmini.{h,cpp}        XML element extractor (tags + attributes)
+    renderer.{h,cpp}       D3D9 quads/text/images (3 batches, single VB)
+    font8x8.h              Bitmap font
+pctest/
+  PlexRelay/               C# relay: transcode → WMV, byte-range reads
+  deploy.py                FTP deploy to the console
+  fakeplex.py              Fake Plex server for testing
 ```
 
-## Notes techniques
+## Technical notes
 
-- **Pas de fixed-function pipeline** sur Xenon : tout passe par des shaders
-  SM3 compilés à l'exécution via `D3DXCompileShader`.
-- `D3DRS_HALFPIXELOFFSET` activé pour l'alignement pixel des quads 2D.
-- `D3DUSAGE_DYNAMIC` / `D3DLOCK_DISCARD` n'existent pas sur Xenon.
-- Infos système via API documentées : `XGetVideoMode`, `XGetVideoCapabilities`,
-  `XGetGameRegion`, `XGetLanguage`, `GetTickCount`.
-- Headers CRT publics : `XDK\TechPreview\Jul12Compiler\include\xbox`
-  (`XDK\Source\crt` contient les headers *internes* au CRT, ne pas utiliser).
-- Le framework ATG (`XDK\Source\Samples\Common`) est volontairement évité.
-- Plex360 : les résultats réseau arrivent sur une queue (worker thread → main) ;
-  chaque requête de liste porte un ticket pour ignorer les réponses périmées.
-  Posters via l'endpoint transcode de Plex (pas besoin du full-res).
-
-## Si tu installes quand même VS2010 + SDK officiellement
-
-1. `en_visual_studio_2010_ultimate_x86_dvd_509116.iso` (gratuit sur
-   my.visualstudio.com, sha256 `602926c8...bff98`) — AVANT le SDK.
-2. `XBOX360_SDK_21256.3.exe` (sha256 `efec946c...dc4bc7` — le fichier dans
-   `sdk/` est déjà ce binaire vérifié).
-3. Ouvre `XboxHello.sln`, config `Release` ou `Release_LTCG`, Build.
+- **No fixed-function pipeline** on Xenon: everything goes through SM3
+  shaders compiled at runtime via `D3DXCompileShader`.
+- `D3DRS_HALFPIXELOFFSET` enabled for pixel-aligned 2D quads.
+- `D3DUSAGE_DYNAMIC` / `D3DLOCK_DISCARD` don't exist on Xenon.
+- CPU-written textures must use `D3DFMT_LIN_*` formats (Xenon swizzles
+  regular textures in UMA memory).
+- **Retail sockets are encrypted**: `XNET_STARTUP_BYPASS_SECURITY` is
+  ignored on retail consoles — each `socket()` must be switched to
+  plaintext with the undocumented `setsockopt` options `0x5801`/`0x5802`
+  (`Net::MakeInsecure`), or LAN `connect()` times out.
+- Plex360: network results arrive on a queue (worker thread → main);
+  each list request carries a ticket to discard stale responses.
+- USER_IO streaming: pass `XMEDIA_CREATE_SHARE_IO_CACHE` plus the *same*
+  callback and context for audio+video so the player demuxes one shared
+  ASF stream itself.
